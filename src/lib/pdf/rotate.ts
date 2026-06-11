@@ -45,7 +45,7 @@ export const rotatePdf = async (
   }
 
   const pdfBytes = await newPdfDoc.save();
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const blob = new Blob([pdfBytes as unknown as BlobPart], { type: 'application/pdf' });
   const filename = `${pdfFile.name.replace('.pdf', '')}_rotated.pdf`;
 
   return { blob, filename };

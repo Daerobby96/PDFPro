@@ -18,6 +18,7 @@ import Link from 'next/link';
 import { useToast } from '@/components/ui/use-toast';
 import { useSharedFile } from '@/context/FileContext';
 import { createClient } from '@/lib/supabase/client';
+import type { Database } from '@/types/database.types';
 
 export default function PdfToImagePage() {
   const [file, setFile] = useState<PDFFile | null>(null);
@@ -33,6 +34,7 @@ export default function PdfToImagePage() {
   const { sharedFile, setSharedFile } = useSharedFile();
   const supabase = createClient();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (sharedFile) {
       handleFileSelected([sharedFile]);
@@ -98,7 +100,7 @@ export default function PdfToImagePage() {
       // Track conversion history in supabase
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
-        await supabase.from('pdf_history').insert({
+        const historyEntry: Database['public']['Tables']['pdf_history']['Insert'] = {
           user_id: session.user.id,
           tool_used: 'PDF to Image',
           file_name: file.name,
@@ -106,7 +108,9 @@ export default function PdfToImagePage() {
           pages_count: file.totalPages,
           processing_time: Date.now() - startTime,
           success: true
-        });
+        };
+        // @ts-ignore - Supabase types issue with createBrowserClient
+        await supabase.from('pdf_history').insert([historyEntry]);
       }
 
     } catch (err: any) {

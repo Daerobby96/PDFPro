@@ -35,7 +35,7 @@ export const executeSplit = async (
 
     // Save
     const pdfBytes = await newPdfDoc.save();
-    const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+    const blob = new Blob([pdfBytes as unknown as BlobPart], { type: 'application/pdf' });
     
     // Clean filename
     const baseFilename = file.name.replace(/\.[^/.]+$/, '');

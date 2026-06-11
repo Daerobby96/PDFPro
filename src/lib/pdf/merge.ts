@@ -35,7 +35,7 @@ export const executeMerge = async (
   }
 
   const pdfBytes = await mergedPdf.save();
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const blob = new Blob([pdfBytes as unknown as BlobPart], { type: 'application/pdf' });
   const filename = `merged_${Date.now()}.pdf`;
 
   return { filename, blob };

@@ -17,6 +17,7 @@ export default function MergePdfPage() {
   const { toast } = useToast();
   const { sharedFile, setSharedFile } = useSharedFile();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (sharedFile) {
       handleFilesSelected([sharedFile]);
@@ -26,7 +27,7 @@ export default function MergePdfPage() {
 
   const handleFilesSelected = async (selectedFiles: File[]) => {
     try {
-      const newPdfFiles = [];
+      const newPdfFiles: PDFFile[] = [];
       for (const f of selectedFiles) {
         const pdfFile = new PDFFile(f);
         await pdfFile.load();

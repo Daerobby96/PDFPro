@@ -9,7 +9,7 @@ import {
   RotateCw, 
   Package, 
   Lock,
-  Image,
+  Image as ImageIcon,
   FileText,
   Upload,
   FileImage
@@ -152,7 +152,7 @@ export default function DashboardPage() {
           />
           
           <ToolCard
-            icon={<Image className="w-8 h-8" />}
+            icon={<ImageIcon className="w-8 h-8" />}
             title="Extract Images"
             description="Get all images from PDF"
             href="/dashboard/tools/extract-images"
@@ -184,7 +184,7 @@ export default function DashboardPage() {
           />
           
           <ToolCard
-            icon={<Image className="w-8 h-8" />}
+            icon={<ImageIcon className="w-8 h-8" />}
             title="Image to PDF"
             description="Convert image files to clean PDF"
             href="/dashboard/tools/image-to-pdf"

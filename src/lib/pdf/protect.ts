@@ -46,7 +46,7 @@ export const protectPdf = async (
   newPdfDoc.setModificationDate(new Date());
 
   const pdfBytes = await newPdfDoc.save();
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const blob = new Blob([pdfBytes as unknown as BlobPart], { type: 'application/pdf' });
   const filename = `${pdfFile.name.replace('.pdf', '')}_protected.pdf`;
 
   return { blob, filename };

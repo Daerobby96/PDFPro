@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import type { Database } from '@/types/database.types';
 import { FileText, Check, ArrowLeft, Loader2, Sparkles } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 
@@ -81,6 +82,7 @@ export default function PricingPage() {
   const [fetchingUser, setFetchingUser] = useState(true)
 
   useEffect(() => {
+    const supabase = createClient()
     async function loadUser() {
       try {
         const { data: { session } } = await supabase.auth.getSession()
@@ -92,7 +94,7 @@ export default function PricingPage() {
             .from('profiles')
             .select('subscription_tier')
             .eq('id', session.user.id)
-            .single()
+            .single<{ subscription_tier: 'free' | 'pro' | 'team' }>()
           
           if (profile?.subscription_tier) {
             setCurrentTier(profile.subscription_tier)
@@ -124,9 +126,13 @@ export default function PricingPage() {
     setLoadingPlan(planId)
     try {
       // 1. Update Profiles table
+      const updateData: Database['public']['Tables']['profiles']['Update'] = { 
+        subscription_tier: planId 
+      };
       const { error: profileError } = await supabase
         .from('profiles')
-        .update({ subscription_tier: planId })
+        // @ts-ignore - Supabase types issue with createBrowserClient
+        .update(updateData)
         .eq('id', user.id)
 
       if (profileError) throw profileError
@@ -139,24 +145,28 @@ export default function PricingPage() {
         .single()
 
       if (existingSub) {
+        const subUpdateData: Database['public']['Tables']['subscriptions']['Update'] = {
+          plan: planId,
+          status: 'active',
+          updated_at: new Date().toISOString()
+        };
         await supabase
           .from('subscriptions')
-          .update({
-            plan: planId,
-            status: 'active',
-            updated_at: new Date().toISOString()
-          })
+          // @ts-ignore - Supabase types issue with createBrowserClient
+          .update(subUpdateData)
           .eq('user_id', user.id)
       } else {
+        const subInsertData: Database['public']['Tables']['subscriptions']['Insert'] = {
+          user_id: user.id,
+          plan: planId,
+          status: 'active',
+          current_period_start: new Date().toISOString(),
+          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        };
         await supabase
           .from('subscriptions')
-          .insert({
-            user_id: user.id,
-            plan: planId,
-            status: 'active',
-            current_period_start: new Date().toISOString(),
-            current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          })
+          // @ts-ignore - Supabase types issue with createBrowserClient
+          .insert([subInsertData])
       }
 
       setCurrentTier(planId)

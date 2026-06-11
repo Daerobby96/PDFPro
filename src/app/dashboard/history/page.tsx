@@ -99,7 +99,7 @@ export default async function HistoryPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                {history.map((item) => {
+                {history.map((item: any) => {
                   const tool = toolConfig[item.tool_used] || { label: item.tool_used, colorClass: 'text-slate-600 bg-slate-50 dark:bg-slate-900/20 dark:text-slate-400', icon: FileText };
                   const ToolIcon = tool.icon;
                   const date = new Date(item.created_at);

@@ -26,6 +26,7 @@ export default function ConvertPage() {
   const { toast } = useToast();
   const { sharedFile, setSharedFile } = useSharedFile();
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (sharedFile) {
       handleFileSelected([sharedFile]);

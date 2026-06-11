@@ -19,12 +19,12 @@ export default async function DashboardLayout({
     redirect('/login')
   }
 
-  let subscriptionTier = 'free'
+  let subscriptionTier: 'free' | 'pro' | 'team' = 'free'
   const { data: profile } = await supabase
     .from('profiles')
     .select('subscription_tier')
     .eq('id', session.user.id)
-    .single()
+    .single<{ subscription_tier: 'free' | 'pro' | 'team' }>()
 
   if (profile?.subscription_tier) {
     subscriptionTier = profile.subscription_tier

@@ -39,7 +39,7 @@ export const saveMetadata = async (
   pdfDoc.setModificationDate(new Date());
 
   const pdfBytes = await pdfDoc.save();
-  const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const blob = new Blob([pdfBytes as unknown as BlobPart], { type: 'application/pdf' });
   const filename = `${pdfFile.name.replace('.pdf', '')}_metadata.pdf`;
 
   return { blob, filename };

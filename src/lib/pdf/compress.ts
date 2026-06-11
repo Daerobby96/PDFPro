@@ -85,7 +85,7 @@ export const compressPdf = async (
   }
 
   const pdfBytes = await newPdfDoc.save();
-  const resultBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+  const resultBlob = new Blob([pdfBytes as unknown as BlobPart], { type: 'application/pdf' });
   const filename = `${pdfFile.name.replace('.pdf', '')}_compressed.pdf`;
 
   const reduction = ((1 - (resultBlob.size / pdfFile.size)) * 100).toFixed(1);
