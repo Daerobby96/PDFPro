@@ -74,7 +74,7 @@ export default async function HistoryPage() {
           <Info className="w-12 h-12 text-slate-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">No History Yet</h3>
           <p className="text-slate-500 dark:text-slate-400 max-w-sm mx-auto mb-6">
-            You haven't processed any PDF files yet. Try using some of our PDF tools from the dashboard!
+            You haven&apos;t processed any PDF files yet. Try using some of our PDF tools from the dashboard!
           </p>
           <Link 
             href="/dashboard" 
