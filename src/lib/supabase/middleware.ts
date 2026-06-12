@@ -4,14 +4,12 @@ import type { NextRequest } from 'next/server'
 import type { Database } from '@/types/database.types'
 
 /**
- * Supabase client for use in Middleware
- * Handles authentication and session refresh
+ * Supabase middleware client.
+ * Refreshes the session cookie on every request so it never expires silently.
  */
 export async function middleware(req: NextRequest) {
   let res = NextResponse.next({
-    request: {
-      headers: req.headers,
-    },
+    request: { headers: req.headers },
   })
 
   const supabase = createServerClient<Database>(
@@ -19,48 +17,25 @@ export async function middleware(req: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
+        get(name) {
           return req.cookies.get(name)?.value
         },
-        set(name: string, value: string, options) {
-          req.cookies.set({
-            name,
-            value,
-            ...options,
-          })
-          res = NextResponse.next({
-            request: {
-              headers: req.headers,
-            },
-          })
-          res.cookies.set({
-            name,
-            value,
-            ...options,
-          })
+        set(name, value, options) {
+          // Write cookie to the outgoing request so subsequent middleware can read it
+          req.cookies.set({ name, value, ...options })
+          res = NextResponse.next({ request: { headers: req.headers } })
+          res.cookies.set({ name, value, ...options })
         },
-        remove(name: string, options) {
-          req.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
-          res = NextResponse.next({
-            request: {
-              headers: req.headers,
-            },
-          })
-          res.cookies.set({
-            name,
-            value: '',
-            ...options,
-          })
+        remove(name, options) {
+          req.cookies.set({ name, value: '', ...options })
+          res = NextResponse.next({ request: { headers: req.headers } })
+          res.cookies.set({ name, value: '', ...options })
         },
       },
     }
   )
 
-  // Refresh session if expired
+  // Refresh session — this writes updated cookies to `res` automatically
   await supabase.auth.getSession()
 
   return res
@@ -69,11 +44,8 @@ export async function middleware(req: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
+     * Run on all paths except Next.js internals and static assets.
      */
-    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
