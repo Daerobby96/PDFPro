@@ -12,7 +12,14 @@ import {
   Image as ImageIcon,
   FileText,
   Upload,
-  FileImage
+  FileImage,
+  Droplets,
+  Hash,
+  AlignVerticalSpaceAround,
+  EyeOff,
+  FileEdit,
+  Edit3,
+  Sparkles
 } from 'lucide-react'
 import { useSharedFile } from '@/context/FileContext'
 
@@ -119,6 +126,7 @@ export default function DashboardPage() {
         </h2>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Basic Tools */}
           <ToolCard
             icon={<Scissors className="w-8 h-8" />}
             title="Split PDF"
@@ -199,6 +207,75 @@ export default function DashboardPage() {
             color="blue"
           />
         </div>
+
+        {/* Premium Tools Section */}
+        <div className="mt-12">
+          <div className="flex items-center gap-3 mb-6">
+            <Sparkles className="w-6 h-6 text-yellow-500" />
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              Premium Tools
+            </h2>
+            <span className="px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full">
+              NEW
+            </span>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <ToolCard
+              icon={<Edit3 className="w-8 h-8" />}
+              title="PDF Editor"
+              description="Add text, images & shapes directly"
+              href="/dashboard/tools/editor"
+              color="orange"
+              premium
+            />
+            
+            <ToolCard
+              icon={<Droplets className="w-8 h-8" />}
+              title="Add Watermark"
+              description="Text or image watermark with customization"
+              href="/dashboard/tools/watermark"
+              color="blue"
+              premium
+            />
+            
+            <ToolCard
+              icon={<Hash className="w-8 h-8" />}
+              title="Page Numbers"
+              description="Auto numbering with custom formats"
+              href="/dashboard/tools/page-numbers"
+              color="purple"
+              premium
+            />
+            
+            <ToolCard
+              icon={<AlignVerticalSpaceAround className="w-8 h-8" />}
+              title="Header & Footer"
+              description="Custom headers and footers per page"
+              href="/dashboard/tools/header-footer"
+              color="green"
+              premium
+            />
+            
+            <ToolCard
+              icon={<EyeOff className="w-8 h-8" />}
+              title="Redact Content"
+              description="Remove sensitive info permanently"
+              href="/dashboard/tools/redact"
+              color="red"
+              premium
+            />
+            
+            <ToolCard
+              icon={<FileEdit className="w-8 h-8" />}
+              title="Fill Forms"
+              description="Auto-fill PDF forms programmatically"
+              href="/dashboard/tools/form-filler"
+              color="indigo"
+              premium
+            />
+          </div>
+        </div>
       </div>
 
       {/* Stats */}
@@ -234,7 +311,8 @@ function ToolCard({
   description, 
   href, 
   color,
-  disabled 
+  disabled,
+  premium 
 }: { 
   icon: React.ReactNode
   title: string
@@ -242,6 +320,7 @@ function ToolCard({
   href: string
   color: string
   disabled?: boolean
+  premium?: boolean
 }) {
   const colorClasses: Record<string, string> = {
     purple: 'text-purple-500 bg-purple-50 dark:bg-purple-900/20',
@@ -256,10 +335,22 @@ function ToolCard({
 
   const CardContent = (
     <div 
-      className={`bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700 transition ${
-        disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg hover:border-primary-500/50 cursor-pointer'
+      className={`bg-white dark:bg-gray-800 p-6 rounded-xl border transition relative ${
+        disabled 
+          ? 'opacity-50 cursor-not-allowed border-gray-200 dark:border-gray-700' 
+          : premium
+          ? 'border-2 border-gradient-to-r from-yellow-400 to-orange-500 hover:shadow-xl hover:scale-105 cursor-pointer'
+          : 'border border-gray-200 dark:border-gray-700 hover:shadow-lg hover:border-primary-500/50 cursor-pointer'
       }`}
     >
+      {premium && (
+        <div className="absolute -top-2 -right-2">
+          <span className="flex items-center gap-1 px-2 py-1 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold rounded-full shadow-lg">
+            <Sparkles className="w-3 h-3" />
+            PRO
+          </span>
+        </div>
+      )}
       <div className={`w-14 h-14 rounded-lg ${colorClasses[color]} flex items-center justify-center mb-4`}>
         {icon}
       </div>
